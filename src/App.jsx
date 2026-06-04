@@ -78,12 +78,30 @@ export default function Presentation() {
     { name: "Proposed (APPM)", LossRatio: 96.9, fill: "#22c55e" }
   ];
 
-  // APPM Simulator Logic
-  let simTier, simRt, simSi, simPayment;
-  if(appmIncome < 10909) { simTier = 1; simRt = 1.0; simSi = appmIncome * 0.01; simPayment = 0; }
-  else if (appmIncome < 20000) { simTier = 2; simRt = 1.5; simSi = 0; simPayment = appmIncome * 0.015; }
-  else if (appmIncome < 50000) { simTier = 3; simRt = 2.0; simSi = 0; simPayment = appmIncome * 0.02; }
-  else { simTier = 4; simRt = 2.75; simSi = 0; simPayment = appmIncome * 0.0275; }
+  const subsidyTaperData = [
+    { tier: 'Tier 1 (<10.9k)', User: 0.0, Subsidy: 2.75 },
+    { tier: 'Tier 2 (10.9k-20k)', User: 1.5, Subsidy: 1.25 },
+    { tier: 'Tier 3 (20k-50k)', User: 2.0, Subsidy: 0.75 },
+    { tier: 'Tier 4 (>50k)', User: 2.75, Subsidy: 0.0 },
+  ];
+
+  // --- APPM SIMULATOR LOGIC (Subsidy Gap Analysis) ---
+  let simTier, simRt, simGap, simSi, simPayment;
+  if(appmIncome < 10909) { 
+    simTier = 1; simRt = 0.0; simGap = 2.75; 
+  }
+  else if (appmIncome <= 19999) { 
+    simTier = 2; simRt = 1.5; simGap = 1.25; 
+  }
+  else if (appmIncome <= 49999) { 
+    simTier = 3; simRt = 2.0; simGap = 0.75; 
+  }
+  else { 
+    simTier = 4; simRt = 2.75; simGap = 0.0; 
+  }
+  
+  simPayment = appmIncome * (simRt / 100);
+  simSi = appmIncome * (simGap / 100);
 
   // --- 27 SLIDES DEFINITION ---
   const slides = [
@@ -632,7 +650,7 @@ export default function Presentation() {
             </li>
             <li className="list-item">
               <span className="list-icon text-green font-bold text-xl"><span className="math-inline">S<sub>i</sub></span></span>
-              <span><strong>Indigent Trigger:</strong> A state solidarity subsidy. Automatically triggered (<span className="math-inline">S<sub>i</sub> = Y<sub>i</sub> × R<sub>t</sub></span>) for households below Ksh 10,909, zeroing their out-of-pocket cost.</span>
+              <span><strong>Indigent Trigger:</strong> A state solidarity subsidy automatically triggered to absorb the premium.</span>
             </li>
           </ul>
         </div>
@@ -643,34 +661,45 @@ export default function Presentation() {
       title: "Interactive: APPM Income Simulator", section: "The Proposed APPM", badge: "badge-appm", icon: <Sliders size={32} className="text-green" />,
       content: (
         <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-          <p className="slide-description text-center" style={{marginBottom: '1rem'}}>Slide to test how the APPM dynamically adjusts the final payment based on gross income.</p>
+          <p className="slide-description text-center" style={{marginBottom: '0.5rem'}}>Slide to test how the APPM dynamically triggers state subsidies based on Chapter 5 thresholds.</p>
           
-          <div className="controls-panel">
+          <div className="controls-panel" style={{marginBottom: '1rem', padding: '0.75rem'}}>
             <div className="control-group">
               <label><span>Simulate Gross Income (Y<sub>i</sub>)</span><span className="text-blue">Ksh {appmIncome.toLocaleString()}</span></label>
               <input type="range" min="2000" max="60000" step="1000" value={appmIncome} onChange={(e) => setAppmIncome(Number(e.target.value))} className="control-slider" />
             </div>
           </div>
 
-          <div className="grid-2 w-full mt-4" style={{ flexGrow: 1 }}>
+          <div className="grid-2 w-full mt-2" style={{ flexGrow: 1, alignItems: 'stretch' }}>
             <div className="card text-center" style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
-              <h3 className="text-purple">Assigned Socio-Economic Tier</h3>
+              <h3 className="text-purple">Socio-Economic Classification</h3>
               <div style={{fontSize: '3rem', fontWeight: 'bold', color: '#7c3aed'}}>Tier {simTier}</div>
-              <p className="mt-2 text-lg">Applied Rate (R<sub>t</sub>): <strong>{simRt}%</strong></p>
+              <p className="mt-2 text-lg">Applied Base Rate (R<sub>t</sub>): <strong>{simRt}%</strong></p>
+              {simTier === 1 ?
+                <div style={{marginTop:'1rem', padding:'0.75rem', backgroundColor:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:'0.5rem', color:'#15803d', fontSize:'0.9rem', fontWeight:'bold'}}>Vulnerability Triggered: Eligible for 100% State Subsidy</div> :
+                <div style={{marginTop:'1rem', padding:'0.75rem', backgroundColor:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:'0.5rem', color:'#475569', fontSize:'0.9rem'}}>Above Threshold: Standard Cross-Subsidization Rate</div>
+              }
             </div>
             
-            <div className="grid-2" style={{gap: '1rem'}}>
-               <div className="card card-blue text-center flex-center" style={{padding:'1rem'}}>
-                  <h3>State Subsidy (S<sub>i</sub>)</h3>
-                  <div className="metric-highlight text-blue">Ksh {simSi.toFixed(0)}</div>
-                  {simTier === 1 && <p style={{fontSize:'0.85rem'}}>Full 100% absorption active.</p>}
-               </div>
-               <div className={`card text-center flex-center ${simPayment === 0 ? 'card-green' : 'card-red'}`} style={{padding:'1rem'}}>
-                  <h3>Final Payment (C<sub>i</sub>)</h3>
-                  <div className={`metric-highlight ${simPayment === 0 ? 'text-green' : 'text-red'}`}>
-                    Ksh {simPayment.toFixed(0)}
-                  </div>
-                  {simPayment === 0 && <p style={{fontSize:'0.85rem'}}>Zero out-of-pocket burden.</p>}
+            <div className="card" style={{display:'flex', flexDirection:'column', justifyContent:'center', backgroundColor: '#f8fafc'}}>
+               <h3 className="text-blue text-center mb-4">Dynamic Formula Execution</h3>
+               <div className="list-layout" style={{gap: '1rem', fontSize: '1.1rem', fontFamily: 'monospace'}}>
+                 <div style={{display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #cbd5e1', paddingBottom: '0.5rem'}}>
+                   <span>Gross Income (Y<sub>i</sub>)</span>
+                   <span>Ksh {appmIncome.toLocaleString()}</span>
+                 </div>
+                 <div style={{display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #cbd5e1', paddingBottom: '0.5rem'}}>
+                   <span>Base Premium (Y<sub>i</sub> × {simRt}%)</span>
+                   <span>Ksh {(appmIncome * (simRt/100)).toFixed(0)}</span>
+                 </div>
+                 <div style={{display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid #94a3b8', paddingBottom: '0.5rem', color: simSi > 0 ? '#16a34a' : '#64748b', fontWeight: simSi > 0 ? 'bold' : 'normal'}}>
+                   <span>State Subsidy (S<sub>i</sub>)</span>
+                   <span>- Ksh {simSi.toFixed(0)}</span>
+                 </div>
+                 <div style={{display: 'flex', justifyContent: 'space-between', paddingTop: '0.5rem', fontSize: '1.5rem', fontWeight: 'bold', color: simPayment === 0 ? '#16a34a' : '#dc2626'}}>
+                   <span>Final Out-of-Pocket (C<sub>i</sub>)</span>
+                   <span>Ksh {simPayment.toFixed(0)}</span>
+                 </div>
                </div>
             </div>
           </div>
@@ -679,23 +708,39 @@ export default function Presentation() {
     },
     // 24
     {
-      title: "APPM Impact on ARIMA Solvency", section: "The Proposed APPM", badge: "badge-appm", icon: <Target size={32} className="text-blue" />,
+      title: "Algorithmic Subsidy Gap Analysis", section: "The Proposed APPM", badge: "badge-appm", icon: <Target size={32} className="text-blue" />,
       content: (
-        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-          <p className="slide-description text-center">How does the APPM fix the baseline ARIMA forecast trajectory?</p>
-          <div className="card card-green text-center">
-            <h3 className="text-green">ARIMA Trajectory Stabilization</h3>
-            <p>By capping upper-tier rates at 2.75% and subsidizing Tier 1, the APPM <strong>neutralizes the massive attrition shock</strong> previously projected in the baseline ARIMA. It prevents exponential divergence of claims, ensuring the fund maintains <span className="math-inline">U(t) &gt; 0</span> over the 5-year window.</p>
+        <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '1rem'}}>
+          <p className="slide-description text-center mb-0">To maintain the 2.75% target without over-burdening the informal sector, the government must cover the gap between the Applied Rate (<span className="math-inline">R<sub>t</sub></span>) and the Statutory Rate (<span className="math-inline">R<sub>s</sub> = 2.75%</span>).</p>
+          
+          <div className="math-block w-full" style={{padding:'0.75rem', margin: '0', fontSize: '1.5rem'}}>
+            <div>S<sub>i</sub> = Y<sub>i</sub> × (R<sub>s</sub> - R<sub>t</sub>)</div>
           </div>
-          <table className="data-table mt-4" style={{fontSize:'1rem'}}>
-            <thead><tr><th>Tier</th><th>Income Range</th><th>Rate (<span className="math-inline">R<sub>t</sub></span>)</th><th>Notes</th></tr></thead>
+
+          <table className="data-table m-0" style={{fontSize:'0.85rem'}}>
+            <thead><tr><th>Tier</th><th>Income (Y<sub>i</sub>)</th><th>Rate (R<sub>t</sub>)</th><th>Gap (Δ)</th><th>Economic Justification</th></tr></thead>
             <tbody>
-              <tr><td><strong>Tier 1</strong></td><td>Below Ksh 10,909</td><td>1.00%</td><td>Covered by the <span className="math-inline">S<sub>i</sub></span> state subsidy.</td></tr>
-              <tr><td><strong>Tier 2</strong></td><td>Ksh 10,909 - 19,999</td><td>1.50%</td><td>Protects low-income households from default.</td></tr>
-              <tr><td><strong>Tier 3</strong></td><td>Ksh 20,000 - 49,999</td><td>2.00%</td><td>Gradual scaling for middle earners.</td></tr>
-              <tr><td><strong>Tier 4</strong></td><td>Ksh 50,000+</td><td>2.75%</td><td>Parity with formal sector rates.</td></tr>
+              <tr><td><strong>1</strong></td><td>&lt; Ksh 10,909</td><td>0.0%</td><td className="text-red font-bold">2.75%</td><td><strong>Full Indigent Support:</strong> Absorbs entire premium to prevent catastrophic utility loss.</td></tr>
+              <tr><td><strong>2</strong></td><td>Ksh 10,909 - 19,999</td><td>1.5%</td><td className="text-amber font-bold">1.25%</td><td><strong>Vulnerability Mitigation:</strong> Partial subsidy bridging the gap for those just above poverty line.</td></tr>
+              <tr><td><strong>3</strong></td><td>Ksh 20,000 - 49,999</td><td>2.0%</td><td className="text-green font-bold">0.75%</td><td><strong>Progressive Transition:</strong> Tapers off as disposable income increases, preparing for Tier 4.</td></tr>
+              <tr><td><strong>4</strong></td><td>&gt; Ksh 50,000</td><td>2.75%</td><td className="text-blue font-bold">0.00%</td><td><strong>Fiscal Parity:</strong> No subsidy required; user reaches standard national contribution rate.</td></tr>
             </tbody>
           </table>
+
+          <div className="card chart-container" style={{ flexGrow: 1, minHeight: '200px' }}>
+            <h3 style={{fontSize: '1rem', marginBottom: '0.5rem'}}>Visualizing the Subsidy Taper</h3>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={subsidyTaperData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" domain={[0, 3]} tickFormatter={(val) => `${val}%`} />
+                <YAxis dataKey="tier" type="category" width={120} />
+                <Tooltip formatter={(value) => `${value}%`} />
+                <Legend />
+                <Bar dataKey="User" name="User Contribution (R_t)" stackId="a" fill="#2563eb" />
+                <Bar dataKey="Subsidy" name="Govt Subsidy Gap (Δ)" stackId="a" fill="#22c55e" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       )
     },

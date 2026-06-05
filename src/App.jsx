@@ -286,70 +286,188 @@ export default function Presentation() {
         </div>
       )
     },
-   // 9
-    {
-      title: "The Homa Bay Proxy Context", section: "Methodology", badge: "badge-method", icon: <MapPin size={32} className="text-amber" />,
-      content: (
-        // Added justifyContent: 'flex-start' and overflowY: 'auto' here to prevent top cutoff
-        <div className="flex-center" style={{alignItems: 'flex-start', justifyContent: 'flex-start', height: '100%', overflowY: 'auto', paddingBottom: '1rem'}}>
-          <p className="slide-description">This study purposefully selected Homa Bay County to serve as a representative macroeconomic proxy for Kenya's highly volatile informal sector.</p>
-          <div className="grid-2 w-full mt-2">
-            <div className="card">
-              <h3 className="text-amber">Economic Reality</h3>
-              <p>Homa Bay exhibits a high poverty index (28.2%) and an economy heavily skewed toward seasonal agriculture and fishing, characterized by extreme cash flow volatility.</p>
-            </div>
-            <img src="https://images.unsplash.com/photo-1709285671944-a27fcbd207eb?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZWNvbm9taWMlMjByZWFsaXR5fGVufDB8fDB8fHww" alt="Informal Market" style={{borderRadius: '0.75rem', height: '100%', objectFit: 'cover', width: '100%', border: '1px solid #e2e8f0'}} />
-          </div>
-        </div>
-      )
-    },    // 10
-    {
-      title: "Macro-Level: Time Series Forecasting", section: "Methodology", badge: "badge-method", icon: <LineChart size={32} className="text-blue" />,
-      content: (
-        <div className="flex-center" style={{alignItems: 'flex-start'}}>
-          <p className="slide-description">To establish a baseline of "status quo" claims and revenues, we applied a stochastic time-series forecast to 8 years of audited NHIF ledgers.</p>
-          
-          <div className="math-block w-full">
-            <div>Y<sub>t</sub> = c + Y<sub>t-1</sub> + ε<sub>t</sub></div>
-            <div className="math-caption">ARIMA(0,1,0) Random Walk with Drift</div>
-          </div>
+  // 9 — METHODOLOGY SLIDE 1: Research Design + Default Risk Model (§3.1–§3.4.1)
+{
+  title: "Methodology I: Design, Data & Default Risk Model", section: "Methodology", badge: "badge-method", icon: <MapPin size={32} className="text-amber" />,
+  content: (
+    <div style={{display:'flex', flexDirection:'column', height:'100%', overflowY:'auto', gap:'0.5rem', paddingBottom:'1rem'}}>
 
-          <div className="card w-full mt-2" style={{padding:'1.25rem'}}>
-             <h3 className="text-blue" style={{marginBottom:'0.5rem'}}>Why ARIMA Instead of Linear Deterministic?</h3>
-             <p style={{lineHeight: '1.6', fontSize: '1rem'}}>
-               A Linear Deterministic model assumes claims grow in a perfectly straight, predictable line. However, health insurance data is highly non-stationary. ARIMA(0,1,0) was chosen because it mathematically accounts for stochastic (random) financial shocks, sudden disease outbreaks, and the persistent volatility that break linear models.
-             </p>
-          </div>
+      {/* Row 1 — Design + Homa Bay */}
+      <div className="grid-2" style={{gap:'0.5rem'}}>
+        <div className="card" style={{padding:'0.7rem'}}>
+          <h3 className="text-amber" style={{fontSize:'0.85rem', marginBottom:'0.25rem'}}>Research Design & Study Area</h3>
+          <p style={{fontSize:'0.75rem', margin:0}}>Quantitative, predictive design. <strong>Primary:</strong> Monte Carlo simulation (R, n=1,000) mirroring the government's AI-driven PMT algorithm. Proxy income tiers: Ksh 5,000 / 8,000 / 15,000. <strong>Secondary:</strong> 8 years of finalized NHIF financial ledgers (2016–2024). <strong>Homa Bay Proxy:</strong> Poverty index 28.2%, seasonal agriculture/fishing economy — representative of Kenya's informal sector volatility. Data truncated at 2023/24 (standard actuarial audit lag of 12–24 months).</p>
         </div>
-      )
-    },
-    // 11
-    {
-      title: "Micro-Level: Default Risk Modeling", section: "Methodology", badge: "badge-method", icon: <Calculator size={32} className="text-amber" />,
-      content: (
-        <div className="flex-center" style={{alignItems:'flex-start'}}>
-          <p className="slide-description">To mathematically calculate the probability of premium default, a binomial Logistic Regression model was simulated (n=1000).</p>
-          
-          <div className="math-block w-full">
-            <div>P(default) = 1 / (1 + e<sup>-(β₀ + β₁A + β₂V + β₃Y)</sup>)</div>
-            <div className="math-caption">Binomial Logistic Regression Equation</div>
-          </div>
+        <div className="card card-amber" style={{padding:'0.7rem'}}>
+          <h3 className="text-amber" style={{fontSize:'0.85rem', marginBottom:'0.25rem'}}>§3.4.1 — Logistic Regression: Default Risk</h3>
+          <p style={{fontSize:'0.75rem', margin:0}}>Binomial logistic regression (Hosmer et al., 2013). Dependent variable: 1 = Default, 0 = Active. Executed via <strong>glm()</strong> in R on n=1,000 proxy households.</p>
+        </div>
+      </div>
 
-          <div className="grid-2 w-full mt-2">
-            <div className="card" style={{padding: '1rem'}}>
-              <h3 className="text-amber">The Variables</h3>
-              <p><strong>A<sub>i</sub> (Affordability):</strong> Premium / Disposable Income.<br/>
-              <strong>V<sub>i</sub> (Volatility Income):</strong> Standard deviation of monthly cash flows.<br/>
-              <strong>Y<sub>i</sub> (Gross Income):</strong> Absolute earnings baseline.</p>
-            </div>
-            <div className="card card-blue" style={{padding: '1rem'}}>
-              <h3 className="text-blue">The Beta Coefficients (β)</h3>
-              <p><strong>β₁, β₂, β₃:</strong> The regression coefficients generated by the model. These mathematically indicate the <em>weight</em> and <em>direction</em> of each risk factor in driving a default.</p>
-            </div>
+      {/* Formula 1 — Logistic */}
+      <div className="math-block w-full" style={{padding:'0.6rem 1rem', margin:0, fontSize:'1rem'}}>
+        <div>P(default<sub>i</sub>) = 1 / (1 + e<sup>−(β₀ + β₁Aᵢ + β₂Vᵢ + β₃Yᵢ)</sup>)</div>
+        <div className="math-caption" style={{fontSize:'0.72rem'}}>Main Logistic Equation — β₁,β₂,β₃ are regression coefficients indicating weight and direction of each risk factor</div>
+      </div>
+
+      {/* Formula 2 — Volatility Index */}
+      <div className="grid-2" style={{gap:'0.5rem'}}>
+        <div>
+          <div className="math-block w-full" style={{padding:'0.5rem 1rem', margin:0, fontSize:'0.95rem'}}>
+            <div>V<sub>i</sub> = √[ Σ(CF<sub>i,t</sub> − <span style={{textDecoration:'overline'}}>CF</span><sub>i</sub>)² / (n−1) ]</div>
+            <div className="math-caption" style={{fontSize:'0.7rem'}}>Income Volatility Index — standard deviation of simulated monthly cash flows. CF<sub>i,t</sub> = cash flow in month t, <span style={{textDecoration:'overline'}}>CF</span><sub>i</sub> = mean cash flow</div>
           </div>
         </div>
-      )
-    },
+        <div className="card" style={{padding:'0.65rem'}}>
+          <h3 className="text-blue" style={{fontSize:'0.8rem', marginBottom:'0.2rem'}}>Variable Definitions</h3>
+          <p style={{fontSize:'0.72rem', margin:0}}>
+            <strong>Aᵢ</strong> — Affordability Ratio: premium as share of disposable income<br/>
+            <strong>Vᵢ</strong> — Income Volatility Index: std dev of monthly cash flows<br/>
+            <strong>Yᵢ</strong> — Absolute Gross Income: baseline monthly earnings<br/>
+            <strong>β₀</strong> — Intercept: baseline log-odds of default<br/>
+            <strong>β₁,β₂,β₃</strong> — Coefficients: weight and direction of each predictor<br/>
+            <strong>H₀:</strong> Variables have no effect on default &nbsp;|&nbsp; <strong>H₁:</strong> Variables significantly drive default
+          </p>
+        </div>
+      </div>
+
+      {/* Hypotheses + McFadden note */}
+      <div className="card card-blue w-full" style={{padding:'0.6rem 1rem'}}>
+        <p style={{fontSize:'0.75rem', margin:0}}>
+          <strong>Actuarial Justification:</strong> Chosen because SHIF assumes a flat, consistent monthly payment — making income volatility (Vᵢ) the most critical behavioural driver of default. The rigid Ksh 300 floor means any spike in Aᵢ produces an explosive increase in P(defaultᵢ) due to the high β₁ weighting. Model validated by McFadden Pseudo R² (target: 0.20–0.40 = excellent fit).
+        </p>
+      </div>
+    </div>
+  )
+},
+
+// 10 — METHODOLOGY SLIDE 2: Affordability Metrics + Risk Pool Sustainability + Shock Equations (§3.4.2–§3.4.3)
+{
+  title: "Methodology II: Affordability Model & Solvency Equations", section: "Methodology", badge: "badge-method", icon: <Calculator size={32} className="text-blue" />,
+  content: (
+    <div style={{display:'flex', flexDirection:'column', height:'100%', overflowY:'auto', gap:'0.45rem', paddingBottom:'1rem'}}>
+
+      <p style={{fontSize:'0.78rem', color:'#475569', margin:0, fontStyle:'italic'}}>§3.4.2 Affordability & Funding Metrics → §3.4.3 Risk Pool Sustainability, Loss Ratio & Sensitivity Analysis</p>
+
+      {/* EQ 3.1 — DI */}
+      <div className="math-block w-full" style={{padding:'0.55rem 1rem', margin:0, fontSize:'1rem'}}>
+        <div>DI<sub>i</sub> = Y<sub>i</sub> − (Y<sub>i</sub> × α<sub>i</sub>) &nbsp;≡&nbsp; Y<sub>i</sub>(1 − α<sub>i</sub>) <span style={{fontSize:'0.8rem', color:'#64748b', marginLeft:'1rem'}}>(Eq. 3.1)</span></div>
+        <div className="math-caption" style={{fontSize:'0.7rem'}}>Disposable Income. αᵢ ~ U(0.70, 0.85) — stochastic survival cost coefficient. 70–85% of gross income locked into non-discretionary needs (food, rent, fuel).</div>
+      </div>
+
+      {/* EQ Affordability Ratio */}
+      <div className="math-block w-full" style={{padding:'0.55rem 1rem', margin:0, fontSize:'1rem'}}>
+        <div>A<sub>i</sub> = C<sub>i</sub> / DI<sub>i</sub></div>
+        <div className="math-caption" style={{fontSize:'0.7rem'}}>Affordability Ratio. Cᵢ = statutory SHIF contribution (floor Ksh 300). DIᵢ = disposable income from Eq. 3.1. If Aᵢ &gt; 10% → Catastrophic Health Expenditure triggered.</div>
+      </div>
+
+      {/* EQ 3.2 — CHE Indicator */}
+      <div className="math-block w-full" style={{padding:'0.55rem 1rem', margin:0, fontSize:'1rem'}}>
+        <div>I<sub>CHE,i</sub> = {"{"} 1, if C<sub>i</sub>/DI<sub>i</sub> &gt; 0.10 &nbsp;|&nbsp; 0, otherwise {"}"} <span style={{fontSize:'0.8rem', color:'#64748b', marginLeft:'1rem'}}>(Eq. 3.2)</span></div>
+        <div className="math-caption" style={{fontSize:'0.7rem'}}>Catastrophic Expenditure Indicator (WHO 10% threshold). When I_CHE,i = 1 → triggers the high default probabilities in the logistic regression. WHO alternative threshold: 40% of non-subsistence income.</div>
+      </div>
+
+      {/* Sustainability condition + Loss Ratio */}
+      <div className="grid-2" style={{gap:'0.5rem'}}>
+        <div className="math-block" style={{padding:'0.55rem 1rem', margin:0, fontSize:'0.95rem', flex:1}}>
+          <div>Σ C<sub>i</sub> ≥ Σ L<sub>i</sub> + E</div>
+          <div className="math-caption" style={{fontSize:'0.7rem'}}>Risk Pool Sustainability Condition. ΣCᵢ = total premiums collected. ΣLᵢ = total liabilities (claims). E = admin expenses. Violated → Technical Insolvency.</div>
+        </div>
+        <div className="math-block" style={{padding:'0.55rem 1rem', margin:0, fontSize:'0.95rem', flex:1}}>
+          <div>LR = Σ L<sub>i</sub> / Σ C<sub>i</sub></div>
+          <div className="math-caption" style={{fontSize:'0.7rem'}}>Loss Ratio — isolates pure medical risk by stripping admin expenses. If LR &gt; 100% → Ruin Condition Met. H₀: ΣCᵢ ≥ ΣLᵢ+E (solvent) | H₁: ΣCᵢ ≤ ΣLᵢ+E (insolvent).</div>
+        </div>
+      </div>
+
+      {/* Solvency Surplus */}
+      <div className="math-block w-full" style={{padding:'0.55rem 1rem', margin:0, fontSize:'0.95rem'}}>
+        <div>U(t) = U₀ + Σ C<sub>i</sub> − S(t) − E &nbsp;&nbsp; | &nbsp;&nbsp; S(t) = Σ L<sub>j</sub></div>
+        <div className="math-caption" style={{fontSize:'0.7rem'}}>Solvency Surplus (Ruin Theory — Lundberg, 1903). U₀ = initial reserves (Ksh 4,648.5M). S(t) = aggregate claim process. If U(t) &lt; 0 → fund in technical ruin. Stress-tested against: 15% claim volatility (Moral Hazard) | 25% premium attrition (Adverse Selection) | CPI inflationary pressure.</div>
+      </div>
+
+      {/* EQ 3.3 + 3.4 side by side */}
+      <div className="grid-2" style={{gap:'0.5rem'}}>
+        <div className="math-block" style={{padding:'0.55rem 1rem', margin:0, fontSize:'0.9rem', borderLeft:'3px solid #3b82f6', flex:1}}>
+          <div>C<sub>shocked,t</sub> = ΣC<sub>ARIMA,t</sub> × (1 − ρ<sub>attrition</sub>) <span style={{fontSize:'0.75rem', color:'#64748b'}}>(Eq. 3.3)</span></div>
+          <div className="math-caption" style={{fontSize:'0.68rem'}}>Shocked Contributions (Revenue Drop). ρ_attrition = 0.25 → 25% evasion/default rate derived from: 78% national uninsurance rate + logistic model near-certain defaults for earners below Ksh 10,909.</div>
+        </div>
+        <div className="math-block" style={{padding:'0.55rem 1rem', margin:0, fontSize:'0.9rem', borderLeft:'3px solid #ef4444', flex:1}}>
+          <div>L<sub>shocked,t</sub> = ΣL<sub>ARIMA,t</sub> × (1 + μ<sub>hazard</sub>) <span style={{fontSize:'0.75rem', color:'#64748b'}}>(Eq. 3.4)</span></div>
+          <div className="math-caption" style={{fontSize:'0.68rem'}}>Shocked Liabilities (Moral Hazard Spike). μ_hazard = 0.15 → 15% surge calibrated from Thailand UCS transition: newly insured populations spike hospital visits for previously untreated conditions.</div>
+        </div>
+      </div>
+
+      <div className="card card-red w-full" style={{padding:'0.55rem 1rem'}}>
+        <p style={{fontSize:'0.72rem', margin:0}}><strong>Stress Test Parameters:</strong> Both shocked variables (C_shocked,t and L_shocked,t) are fed back into the Sustainability Condition → generating the projected Year 1 operating deficit. The fund's Ksh 4,648.5M starting reserve acts as the absorbing buffer before technical insolvency is declared.</p>
+      </div>
+    </div>
+  )
+},
+
+// 11 — METHODOLOGY SLIDE 3: ARIMA + APPM Framework (§3.4.4–§3.4.5)
+{
+  title: "Methodology III: ARIMA Forecasting & APPM Framework", section: "Methodology", badge: "badge-method", icon: <LineChart size={32} className="text-blue" />,
+  content: (
+    <div style={{display:'flex', flexDirection:'column', height:'100%', overflowY:'auto', gap:'0.45rem', paddingBottom:'1rem'}}>
+
+      <p style={{fontSize:'0.78rem', color:'#475569', margin:0, fontStyle:'italic'}}>§3.4.4 Time Series Forecasting (ARIMA) → §3.4.5 Proposed Alternative Model (APPM)</p>
+
+      {/* ARIMA formula */}
+      <div className="math-block w-full" style={{padding:'0.6rem 1rem', margin:0, fontSize:'1.05rem'}}>
+        <div>Y<sub>t</sub> = c + Y<sub>t−1</sub> + ε<sub>t</sub> &nbsp;&nbsp; [ARIMA(0,1,0) — Random Walk with Drift]</div>
+        <div className="math-caption" style={{fontSize:'0.7rem'}}>Yₜ = forecast value at time t. c = drift constant (average annual growth). Yₜ₋₁ = prior year value. εₜ = white noise (mean=0, random). Fitted to 2016–2024 NHIF ledgers in R. Projects "Status Quo Baseline" revenue and claims for 2025–2029.</div>
+      </div>
+
+      {/* ARIMA parameter table */}
+      <div className="card w-full" style={{padding:'0.65rem 1rem'}}>
+        <h3 className="text-purple" style={{fontSize:'0.83rem', marginBottom:'0.35rem'}}>ARIMA(p, d, q) Parameter Justification</h3>
+        <table className="data-table" style={{fontSize:'0.72rem', margin:0}}>
+          <thead>
+            <tr><th>Parameter</th><th>Value</th><th>Meaning</th><th>Actuarial Evidence</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>p</strong> (Auto-Regressive)</td><td>0</td><td>No past lags needed to predict today</td><td>ACF/PACF plots: no significant autocorrelation after differencing — growth is non-cyclical</td></tr>
+            <tr><td><strong>d</strong> (Differencing)</td><td>1</td><td>First-order differencing to achieve stationarity</td><td>Raw 2016–2024 data shows persistent upward trend; differencing converts "Total Revenue" → "Annual Change in Revenue"</td></tr>
+            <tr><td><strong>q</strong> (Moving Average)</td><td>0</td><td>No moving average correction needed</td><td>Residuals are white noise — no systematic forecast errors to correct for</td></tr>
+            <tr><td><strong>Drift (c)</strong></td><td>~Ksh 2,188M/yr</td><td>Average annual growth added to each step</td><td>Without drift: model assumes flat trend. With drift: model climbs at the historical average rate to reflect medical inflation.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Why not stochastic for the shock */}
+      <div className="card card-amber w-full" style={{padding:'0.6rem 1rem'}}>
+        <h3 className="text-amber" style={{fontSize:'0.8rem', marginBottom:'0.2rem'}}>Why ARIMA Cannot Model the SHIF Shock — And What We Used Instead</h3>
+        <p style={{fontSize:'0.72rem', margin:0}}>ARIMA is inherently backward-looking: it assumes the "rules of the game" are unchanged. The SHIF transition is a <strong>structural break</strong> (new floor, new rate, new population). Therefore: <strong>(1)</strong> ARIMA generates the "Perfect World Baseline" → <strong>(2)</strong> Deterministic Eq. 3.3 & 3.4 shocks are layered on top → <strong>(3)</strong> Shocked variables re-enter the Sustainability Condition → producing the Ksh 23,833.86M Year 1 deficit. Stochastic baseline + deterministic shock = actuarially rigorous hybrid method.</p>
+      </div>
+
+      {/* APPM formula */}
+      <div className="math-block w-full" style={{padding:'0.6rem 1rem', margin:0, fontSize:'1.05rem', borderLeft:'4px solid #22c55e'}}>
+        <div>C<sub>i</sub> = (Y<sub>i</sub> × R<sub>t</sub>) − S<sub>i</sub> &nbsp;&nbsp; [§3.4.5 — APPM Algorithmic Patch]</div>
+        <div className="math-caption" style={{fontSize:'0.7rem'}}>Adjusted Progressive Premium Model. Cᵢ = final out-of-pocket contribution. Yᵢ = AI-predicted proxy income (PMT fallback for informal sector). Rₜ = algorithmic tiered rate (progressive %, not flat 2.75%). Sᵢ = state solidarity subsidy (auto-triggered below poverty threshold).</div>
+      </div>
+
+      {/* APPM subsidy gap + tiers */}
+      <div className="grid-2" style={{gap:'0.5rem'}}>
+        <div className="math-block" style={{padding:'0.55rem 1rem', margin:0, fontSize:'0.95rem', borderLeft:'3px solid #22c55e', flex:1}}>
+          <div>S<sub>i</sub> = Y<sub>i</sub> × (R<sub>s</sub> − R<sub>t</sub>)</div>
+          <div className="math-caption" style={{fontSize:'0.68rem'}}>Subsidy Gap Equation. Rₛ = statutory national rate (2.75%). Rₜ = applied tiered rate. Government covers the difference per household per tier. Exchequer liability is fully calculable from PMT database counts.</div>
+        </div>
+        <div className="card" style={{padding:'0.6rem', flex:1}}>
+          <h3 className="text-green" style={{fontSize:'0.8rem', marginBottom:'0.25rem'}}>APPM Tiered Rate Structure (Rₜ)</h3>
+          <table style={{fontSize:'0.68rem', width:'100%', borderCollapse:'collapse'}}>
+            <thead><tr style={{background:'#f0fdf4'}}><th style={{padding:'0.2rem 0.3rem', textAlign:'left'}}>Tier</th><th style={{padding:'0.2rem 0.3rem'}}>Income (Yᵢ)</th><th style={{padding:'0.2rem 0.3rem'}}>Rₜ</th><th style={{padding:'0.2rem 0.3rem'}}>Gap (Δ)</th></tr></thead>
+            <tbody>
+              <tr><td style={{padding:'0.15rem 0.3rem'}}><strong>1</strong></td><td style={{padding:'0.15rem 0.3rem'}}>&lt;Ksh 10,909</td><td style={{padding:'0.15rem 0.3rem', color:'#dc2626', fontWeight:'bold'}}>0.0%</td><td style={{padding:'0.15rem 0.3rem', color:'#dc2626'}}>2.75%</td></tr>
+              <tr style={{background:'#f8fafc'}}><td style={{padding:'0.15rem 0.3rem'}}><strong>2</strong></td><td style={{padding:'0.15rem 0.3rem'}}>10,909–19,999</td><td style={{padding:'0.15rem 0.3rem', color:'#d97706', fontWeight:'bold'}}>1.5%</td><td style={{padding:'0.15rem 0.3rem', color:'#d97706'}}>1.25%</td></tr>
+              <tr><td style={{padding:'0.15rem 0.3rem'}}><strong>3</strong></td><td style={{padding:'0.15rem 0.3rem'}}>20,000–49,999</td><td style={{padding:'0.15rem 0.3rem', color:'#2563eb', fontWeight:'bold'}}>2.0%</td><td style={{padding:'0.15rem 0.3rem', color:'#2563eb'}}>0.75%</td></tr>
+              <tr style={{background:'#f8fafc'}}><td style={{padding:'0.15rem 0.3rem'}}><strong>4</strong></td><td style={{padding:'0.15rem 0.3rem'}}>&gt;Ksh 50,000</td><td style={{padding:'0.15rem 0.3rem', color:'#16a34a', fontWeight:'bold'}}>2.75%</td><td style={{padding:'0.15rem 0.3rem', color:'#16a34a'}}>0.00%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+},
     // 12
     {
       title: "The SHIF Contribution Formula", section: "Data Analysis", badge: "badge-data", icon: <Calculator size={32} className="text-blue" />,

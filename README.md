@@ -1,16 +1,58 @@
-# React + Vite
+<div align="center">
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 🎛️ SHIF Under Stress: The Interactive Defence Deck
 
-Currently, two official plugins are available:
+### A thesis defence where the examiners get to pull the levers.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**My final-year actuarial research presentation, built as a React app where every key chart responds to live sliders.**
 
-## React Compiler
+[![Open the deck](https://img.shields.io/badge/▶_Open_the_deck-Live-db2777?style=for-the-badge)](https://jessywaweru.github.io/FINAL-YR-PRESENTATION/)
+[![R models](https://img.shields.io/badge/R_Models-actuarial--models--in--r-276DC3?style=for-the-badge&logo=r)](https://github.com/JessyWaweru/actuarial-models-in-r)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Recharts](https://img.shields.io/badge/Recharts-22B5BF)
+![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?logo=githubpages&logoColor=white)
 
-## Expanding the ESLint configuration
+</div>
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🤔 Why not just PowerPoint?
+
+Because "what if attrition hits 40%?" deserves a live answer, not "let me get back to you". 😄
+
+The deck walks through Kenya's NHIF → SHIF transition across 28 slides (background, theory, methodology, results, recommendations), and the key ones are **interactive**:
+
+| 🎚️ Slider | What you see change |
+|---|---|
+| **Minimum premium** & **contribution rate** | The NHIF-vs-SHIF contribution curve and its tipping points |
+| **Member attrition** & **moral hazard** | Revenue vs claims, the fund's deficit and its loss ratio, recalculated live |
+| **Same shocks over 5 years** | The ARIMA baseline vs the shocked revenue and claims, 2024–2029 |
+| **Household income** | Where a household lands under the proposed APPM tiers |
+
+## 🧮 What's inside
+
+Expected-utility and systemic-risk theory · peer-country lessons (Rwanda, Ghana, Thailand) · logistic default model · affordability index · solvency & ruin theory · NHIF loss-ratio history · ARIMA forecast · the **Adjusted Progressive Premium Model** recommendation.
+
+📑 Full write-up: [SHIF Coverage Gaps case study (PDF)](https://jessywaweru.github.io/SHIF-Coverage-Gaps-Case-Study.pdf.pdf)
+
+## 🚀 Run it
+
+```bash
+npm install
+npm run dev                          # → http://localhost:5173/FINAL-YR-PRESENTATION/
+npm run build && npm run deploy      # publish to GitHub Pages
+```
+
+---
+
+<div align="center">
+
+**Built by Jessy Bryan Waweru**: actuary by training, full-stack engineer by obsession.
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/jessy-waweru-b8051a288)
+[![Email](https://img.shields.io/badge/Email-EA4335?logo=gmail&logoColor=white)](mailto:bryanjessywaweru@gmail.com)
+[![GitHub](https://img.shields.io/badge/More_projects-181717?logo=github)](https://github.com/JessyWaweru)
+
+</div>
